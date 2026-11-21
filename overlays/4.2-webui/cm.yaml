@@ -1,0 +1,16 @@
+# todolist-nuxt-config: settings for the web UI. Load it into the container with envFrom:
+# the keys are the environment variable names the Nuxt server reads.
+#
+# The Nuxt server, not the browser, calls the API, so NUXT_API_BASE_URL is the API
+# Service's in-cluster DNS name: the same in every cluster, nothing to look up.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: todolist-nuxt-config
+  namespace: todolist
+  labels:
+    app: todolist
+    tier: frontend
+data:
+  NUXT_API_BASE_URL: "http://todolist-api:8080"
+  NUXT_PUBLIC_USER: ""      # the page title becomes "<user>'s TODOS" (stage 8.0)

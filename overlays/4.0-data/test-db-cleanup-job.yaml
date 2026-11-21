@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: test-db-cleanup-
+  namespace: todolist
+  labels:
+    app: todolist
+    tier: test
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: todolist
+        tier: test
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: cleanup
+          image: mariadb:11.4
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: todolist-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: todolist-config
+                  key: MYSQL_DB
+            - name: MYSQL_TABLE
+              valueFrom:
+                configMapKeyRef:
+                  name: todolist-config
+                  key: MYSQL_TABLE
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -eu
+              mariadb -h backend -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e \
+                "DELETE FROM \`$MYSQL_TABLE\`;"

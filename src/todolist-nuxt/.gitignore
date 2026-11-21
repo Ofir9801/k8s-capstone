@@ -1,0 +1,19 @@
+# Nuxt build output and generated files
+.output/
+.nuxt/
+.nitro/
+.cache/
+dist/
+
+# Dependencies
+node_modules/
+
+# Logs and local env files
+*.log
+.env
+.env.*
+!.env.example
+
+# Editor and agent folders
+.claude/
+.DS_Store

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todolist-api
+  namespace: todolist
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todolist
+      tier: api
+  template:
+    metadata:
+      labels:
+        app: todolist
+        tier: api
+    spec:
+      containers:
+        - name: todolist-api
+          image: ghcr.io/ofir9801/todolist-api:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: todolist-config
+          env:
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: todolist-secret
+                  key: MYSQL_ROOT_PASSWORD

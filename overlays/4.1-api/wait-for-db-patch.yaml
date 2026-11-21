@@ -1,0 +1,32 @@
+# Adds the wait-for-db init container to the todolist-api Deployment, so the API only
+# starts once MariaDB and its todos table are ready. The script itself is wait-for-db.sh,
+# mounted from the wait-for-db ConfigMap that kustomization.yaml generates from it.
+# Listed under `patches:` in kustomization.yaml: your Deployment needs no init container.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todolist-api
+  namespace: todolist
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: mariadb:11.4
+          command: ["/bin/bash", "/scripts/wait-for-db.sh"]
+          envFrom:
+            - configMapRef:
+                name: todolist-config
+          env:
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: todolist-secret
+                  key: MYSQL_ROOT_PASSWORD
+          volumeMounts:
+            - name: wait-for-db
+              mountPath: /scripts
+      volumes:
+        - name: wait-for-db
+          configMap:
+            name: wait-for-db

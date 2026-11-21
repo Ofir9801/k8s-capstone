@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../4.1-api
+  - cm.yaml          # todolist-nuxt-config (see the comment in it)
+  - deployment.yaml
+  - service.yaml
+
+# Runs the workloads as the todolist ServiceAccount (image-pull Secret), see the component.
+components:
+  - ../../components/todolist-sa

@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mariadb
+  labels:
+    app: todolist
+    tier: backend
+spec:
+  serviceName: backend
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todolist
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: todolist
+        tier: backend
+    spec:
+      volumes:
+        - name: initdb
+          configMap:
+            name: mariadb-initdb
+            defaultMode: 0755
+      containers:
+        - name: mariadb
+          image: mariadb:11.4
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: todolist-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: todolist-config
+                  key: MYSQL_DB
+            - name: MYSQL_TABLE
+              valueFrom:
+                configMapKeyRef:
+                  name: todolist-config
+                  key: MYSQL_TABLE
+          volumeMounts:
+            - name: mariadb-data
+              mountPath: /var/lib/mysql
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d
+          ports:
+            - containerPort: 3306
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+  volumeClaimTemplates:
+    - metadata:
+        name: mariadb-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi

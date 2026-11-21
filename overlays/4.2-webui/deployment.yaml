@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todolist-nuxt
+  namespace: todolist
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todolist
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: todolist
+        tier: frontend
+    spec:
+      containers:
+        - name: todolist-nuxt
+          image: ghcr.io/ofir9801/todolist-nuxt:1.0
+          ports:
+            - containerPort: 3000
+          # NUXT_API_BASE_URL and NUXT_PUBLIC_USER from the ConfigMap in cm.yaml
+          envFrom:
+            - configMapRef:
+                name: todolist-nuxt-config

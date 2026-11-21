@@ -1,0 +1,18 @@
+# Runs every Deployment, StatefulSet and Job as the todolist ServiceAccount (see
+# ../../base/serviceaccount.yaml), which carries the regcred image-pull Secret.
+#
+# A Component, not a patch in base: a kustomization's patches only reach the resources it
+# builds itself, and the workloads are added by the overlays. Every overlay that adds
+# workloads (4.0-data, 4.1-api, 4.2-webui) lists this component, so the workloads you
+# write need no serviceAccountName of their own. Later stages inherit the result; 7.0-rbac
+# then gives each workload its own ServiceAccount (which must carry regcred too).
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+patches:
+  - target:
+      kind: Deployment|StatefulSet|Job
+    patch: |-
+      - op: add
+        path: /spec/template/spec/serviceAccountName
+        value: todolist

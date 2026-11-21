@@ -1,0 +1,18 @@
+{
+  "name": "todolist-nuxt",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Server-side rendered Nuxt frontend for the TodoList REST API",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "preview": "nuxt preview",
+    "start": "node .output/server/index.mjs",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "nuxt": "^4.6.4",
+    "vue": "^3.5.45"
+  }
+}

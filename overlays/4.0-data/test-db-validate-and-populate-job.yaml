@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: test-db-validate-and-populate-
+  namespace: todolist
+  labels:
+    app: todolist
+    tier: test
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: todolist
+        tier: test
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: validate-and-populate
+          image: mariadb:11.4
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: todolist-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: todolist-config
+                  key: MYSQL_DB
+            - name: MYSQL_TABLE
+              valueFrom:
+                configMapKeyRef:
+                  name: todolist-config
+                  key: MYSQL_TABLE
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -eu
+              table_exists=$(mariadb -h backend -uroot -p"$MYSQL_ROOT_PASSWORD" -Nse \
+                "SELECT 1 FROM information_schema.tables WHERE table_schema = '$MYSQL_DATABASE' AND table_name = '$MYSQL_TABLE'")
+              test "$table_exists" = "1"
+              mariadb -h backend -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e \
+                "INSERT INTO \`$MYSQL_TABLE\` (task, status) VALUES ('Review capstone data layer', 'pending'), ('Check data survives a Pod restart', 'pending'), ('Deploy application layers', 'pending');"
