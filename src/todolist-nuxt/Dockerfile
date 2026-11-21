@@ -7,11 +7,6 @@ FROM node:24-alpine AS build
 
 WORKDIR /app
 
-# Norton Antivirus intercepts HTTPS (SSL/TLS scanning), so npm must trust its root CA.
-# Only the build stage needs it; the runtime stage does not download anything.
-COPY norton.crt /usr/local/share/ca-certificates/norton.crt
-ENV NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/norton.crt
-
 # Install dependencies first (better layer caching). The postinstall step
 # (nuxt prepare) needs nuxt.config.ts, so copy it along with the lockfile.
 COPY package.json package-lock.json nuxt.config.ts ./
