@@ -1,14 +1,14 @@
 # Stage 4.0: Data Layer
 
 This first stage creates the persistent MariaDB foundation for the todolist
-application. It includes the shared `todolist` namespace from `base/`.
+application. It deploys to the `todolist` namespace, which you create first (see the top-level README).
 
 ## Included Resources
 
 | Resource | Purpose |
 | --- | --- |
 | `todolist-config` ConfigMap | Database name, table name, host, and user settings. |
-| `todolist-secret` Secret | MariaDB root password. |
+| `todolist-db-secret` Secret | MariaDB root password. |
 | `mariadb-initdb` ConfigMap | Initializes the `todos` table when the database is first created. |
 | `mariadb` StatefulSet | Runs one MariaDB pod with a 1 Gi persistent volume claim. |
 | `backend` headless Service | Provides stable in-cluster DNS for MariaDB. |
@@ -28,7 +28,7 @@ kubectl apply -k .
 
 There is no API or UI yet, so three one-off Jobs (Session 2) check the
 database directly. Each one runs the `mariadb` client against the `backend`
-Service, reading the password from `todolist-secret` and the database and table
+Service, reading the password from `todolist-db-secret` and the database and table
 names from `todolist-config`.
 
 | File | What the Job does |

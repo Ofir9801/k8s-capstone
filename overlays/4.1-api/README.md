@@ -14,7 +14,7 @@ The Deployment should:
 - connect to MariaDB through the `backend` Service in the `todolist` namespace;
 - load `MYSQL_DB`, `MYSQL_HOST`, `MYSQL_USER`, and `MYSQL_TABLE` from
   `todolist-config`;
-- load `MYSQL_PASSWORD` from `todolist-secret` key `MYSQL_ROOT_PASSWORD`;
+- load `MYSQL_PASSWORD` from `todolist-db-secret` key `MYSQL_ROOT_PASSWORD`;
 - wait for the database and the `todos` table before the API starts (this part
   is provided, see below); and
 - expose the API's `GET`/`POST /todos`, `GET`/`PUT`/`PATCH`/`DELETE /todos/:id`

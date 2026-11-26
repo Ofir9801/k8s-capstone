@@ -28,5 +28,5 @@ spec:
             - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: todolist-secret
+                  name: todolist-db-secret
                   key: MYSQL_ROOT_PASSWORD
