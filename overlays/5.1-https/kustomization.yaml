@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Stage 5.1 (side branch off 5.0): HTTPS only.
+#   http://todolist.ofir9801.local/...   -> 301 to https://todolist.ofir9801.local/...
+#   https://todolist.ofir9801.local/     -> todolist-nuxt:80
+#   https://todolist.ofir9801.local/api/v1/* -> todolist-api:8080 (prefix rewritten to /)
+#
+# Needs todolist-tls-secret first (self-signed, not stored in the repo):
+#   ./scripts/create-tls-secret -n todolist --name todolist-tls-secret --host todolist.ofir9801.local
+resources:
+  - ../5.0-gateway-api
+  - redirect-httproute.yaml
+
+patches:
+  - path: gateway-https-patch.yaml
+  - path: httproute-https-patch.yaml

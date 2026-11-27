@@ -1,0 +1,3 @@
+# TLS material for 5.1-https (regenerate with scripts/create-tls-secret). Never commit the key.
+certs/
+*.key

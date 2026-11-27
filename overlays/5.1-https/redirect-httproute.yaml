@@ -1,0 +1,18 @@
+# Everything that arrives on the http listener, / and /api/v1 alike, is redirected to HTTPS (301).
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: todolist-redirect
+  namespace: todolist
+spec:
+  parentRefs:
+    - name: todolist
+      sectionName: http
+  hostnames:
+    - todolist.ofir9801.local
+  rules:
+    - filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            statusCode: 301

@@ -1,0 +1,22 @@
+# Adds an HTTPS listener on 443 that terminates TLS with todolist-tls-secret (same namespace as the
+# Gateway). Gateway is a custom resource, so this patch replaces the whole listeners list: the http
+# listener from 5.0 is repeated here. Envoy Gateway adds port 443 to the proxy's LoadBalancer Service.
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: todolist
+  namespace: todolist
+spec:
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      hostname: todolist.ofir9801.local
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: todolist.ofir9801.local
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: todolist-tls-secret
