@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Stage 5.0: one Gateway and one HTTPRoute in front of the app.
+#   todolist.ofir9801.local/          -> todolist-nuxt:80
+#   todolist.ofir9801.local/api/v1/*  -> todolist-api:8080 (prefix rewritten to /)
+# Needs Envoy Gateway and the `eg` GatewayClass (Week 5 hands-on).
+resources:
+  - ../4.2-webui
+  - gateway.yaml
+  - httproute.yaml
+
+patches:
+  - path: service-clusterip-patch.yaml

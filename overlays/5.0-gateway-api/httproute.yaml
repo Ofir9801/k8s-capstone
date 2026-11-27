@@ -1,0 +1,35 @@
+# One HTTPRoute for the whole app. The Gateway picks the most specific match, so /api/v1/...
+# goes to the API and everything else to the web UI, whatever the order of the rules.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: todolist
+  namespace: todolist
+spec:
+  parentRefs:
+    - name: todolist
+  hostnames:
+    - todolist.ofir9801.local
+  rules:
+    # /api/v1/todos reaches the API as /todos: the API serves /todos, not /api/v1/todos.
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api/v1
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      backendRefs:
+        - name: todolist-api
+          port: 8080
+    # Everything else: the web UI.
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: todolist-nuxt
+          port: 80

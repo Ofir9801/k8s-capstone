@@ -1,0 +1,18 @@
+# The Gateway is now the way in from outside, so the API and the web UI no longer need their own
+# external IPs: back from LoadBalancer (4.1, 4.2) to ClusterIP. Inside the cluster they still
+# answer on todolist-api:8080 and todolist-nuxt:80.
+apiVersion: v1
+kind: Service
+metadata:
+  name: todolist-api
+  namespace: todolist
+spec:
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todolist-nuxt
+  namespace: todolist
+spec:
+  type: ClusterIP

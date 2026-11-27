@@ -1,0 +1,15 @@
+# The single public entry point. Envoy Gateway runs an Envoy proxy Deployment and a LoadBalancer
+# Service for it (in envoy-gateway-system); its address shows in `kubectl -n todolist get gateway`.
+# On minikube with the docker driver, `minikube tunnel` gives that Service 127.0.0.1.
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: todolist
+  namespace: todolist
+spec:
+  gatewayClassName: eg
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      hostname: todolist.ofir9801.local
